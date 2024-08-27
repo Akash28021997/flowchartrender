@@ -24,7 +24,7 @@ function App() {
     console.log("hii");
     try {
       const response = await fetch(
-        `http://localhost:5001?currentPage=${currentPage}`,
+        `https://flowchartrender.onrender.com:5001?currentPage=${currentPage}`,
         {
           method: "POST",
           headers: {
