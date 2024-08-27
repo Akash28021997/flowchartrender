@@ -1,0 +1,21 @@
+.Arrow {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+}
+
+.start-box {
+  padding: 0;
+}
+
+.end-box {
+    padding: 0
+}
+
+.arrow-container {
+    position: absolute;
+    top: -5px;
+    left: 265px;
+    transform: rotate(-30deg);
+    transform-origin: 10% 50%;
+}
