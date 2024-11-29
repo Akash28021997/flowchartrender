@@ -56,18 +56,19 @@ def process_data():
 def process_input_data(inp, num):
     inp = inp.split('\n')
 
+    # Clean the input data
     x = len(inp) - 1
     while x >= 0:
         pointer = len(inp[x]) - 1
         if len(inp[x]) <= 3:
-            inp = inp[:x] + inp[x+1:]
+            inp = inp[:x] + inp[x + 1:]
             x -= 1
             continue
         while pointer >= 0:
             if (ord(inp[x][pointer]) >= 32 and ord(inp[x][pointer]) <= 126) or inp[x][pointer] in ['₹', '€']:
                 pass
             else:
-                inp[x] = inp[x][:pointer] + inp[x][pointer+1:]
+                inp[x] = inp[x][:pointer] + inp[x][pointer + 1:]
             pointer -= 1
 
         if inp[x].endswith(';'):
@@ -75,6 +76,11 @@ def process_input_data(inp, num):
         inp[x] = inp[x].lstrip()
         x -= 1
 
+    # Return empty structure if no valid input lines remain
+    if not inp:
+        return [], {}
+
+    # Map elements to the dictionary with incremented values
     dct = {}
     add = 2
     for element in inp:
@@ -82,9 +88,11 @@ def process_input_data(inp, num):
             dct[element] = num + add
             add += 2
 
-    inp = [inp[i:i+4] for i in range(0, len(inp), 4)]
+    # Group elements into sublists of 4
+    inp = [inp[i:i + 4] for i in range(0, len(inp), 4)]
 
-    if len(inp[-1]) == 1:
+    # Handle edge case for a single remaining item
+    if len(inp[-1]) == 1 and len(inp) > 1:
         inp = inp[:-2] + [inp[-2] + inp[-1]]
 
     return inp, dct
