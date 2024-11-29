@@ -27,21 +27,22 @@ def process_data():
     page_output = output_data[input_num - 1].copy()
     alphabet_markers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
-    # Logic for setting continuity markers on each page
-    if input_num == 1:
-        # First page: start with 'Start' and end with 'A'
+   if input_num == 1:
+    # First page: start with 'Start'
         page_output.insert(0, 'Start')
         if total_pages > 1:
-            page_output.append(alphabet_markers[0])  # End with "A"
+            page_output.append(alphabet_markers[0])  # End with "A" for multi-page scenarios
+        else:
+            page_output.append('End')  # End with "End" for single-page scenarios
     elif input_num == total_pages:
-        # Last page: start with previous marker and end with 'End'
+    # Last page: start with previous marker and end with 'End'
         page_output.insert(0, alphabet_markers[input_num - 2])  # Start with the previous marker
         page_output.append('End')
     else:
-        # Middle pages: start with previous marker and end with next marker
+    # Middle pages: start with previous marker and end with next marker
         page_output.insert(0, alphabet_markers[input_num - 2])  # Start with previous marker
-        page_output.append(alphabet_markers[input_num - 1])      # End with next marker
-
+        page_output.append(alphabet_markers[input_num - 1]) 
+        
     # Debug statement to track the output for each page
     print(f"Page {input_num}: {page_output}")
 
