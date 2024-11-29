@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "https://flow-chart-render.onrender.com"}})
 
 @app.route('/', methods=['POST'])
 def process_data():
