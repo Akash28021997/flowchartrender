@@ -2,25 +2,28 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-
-# Minimal CORS configuration
-CORS(app, 
-     origins=["https://flow-chart-render.onrender.com"],
-     allow_credentials=True,
-     methods=["GET", "POST", "OPTIONS"])
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "https://flow-chart-render.onrender.com",
+            "http://localhost:3000"  # Keep local development support
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"],
+        "supports_credentials": True
+    }
+})
 
 @app.route('/', methods=['GET', 'POST', 'OPTIONS'])
 def process_data():
     if request.method == 'OPTIONS':
-        # Handle preflight request
-        response = jsonify({'status': 'ok'})
-        return response
-
-    if request.method == 'GET':
-        return jsonify({'status': 'ok'})
-
+        return '', 200
+        
     try:
+        print("Received request data:", request.get_data())  # Debug log
         data = request.get_json()
+        print("Parsed JSON data:", data)  # Debug log
+        
         if not data:
             return jsonify({"error": "No data provided"}), 400
             
@@ -30,10 +33,52 @@ def process_data():
         if not input_data:
             return jsonify({"error": "Input data is required"}), 400
             
+        if input_data is None or ref_num is None:
+            return jsonify({'message': 'Invalid input'}), 400
+
+        try:
+            ref_num = int(ref_num)
+        except ValueError:
+            return jsonify({'message': 'refNum must be an integer'}), 400
+
+        input_num = request.args.get('currentPage', default=1, type=int)
         output_data, dct = process_input_data(input_data, ref_num)
-        return jsonify({"output": output_data, "dictionary": dct})
-        
+        total_pages = len(output_data)
+
+        if input_num < 1 or input_num > total_pages:
+            return jsonify({'message': 'Page number out of range'}), 400
+
+        page_output = output_data[input_num - 1].copy()
+        alphabet_markers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+        # Logic for setting continuity markers on each page
+        if input_num == 1:
+        # First page: start with 'Start'
+            page_output.insert(0, 'Start')
+            if total_pages > 1:
+                page_output.append(alphabet_markers[0])  # End with "A" for multi-page scenarios
+            else:
+                page_output.append('End')  # End with "End" for single-page scenarios
+        elif input_num == total_pages:
+        # Last page: start with previous marker and end with 'End'
+            page_output.insert(0, alphabet_markers[input_num - 2])  # Start with the previous marker
+            page_output.append('End')
+        else:
+        # Middle pages: start with previous marker and end with next marker
+            page_output.insert(0, alphabet_markers[input_num - 2])  # Start with previous marker
+            page_output.append(alphabet_markers[input_num - 1])      # End with next marker
+
+        # Debug statement to track the output for each page
+        print(f"Page {input_num}: {page_output}")
+
+        return jsonify({
+            'outputString': page_output,
+            'totalPages': total_pages,
+            'ref_dict': dct
+        })
+
     except Exception as e:
+        print("Error occurred:", str(e))  # Debug log
         return jsonify({"error": str(e)}), 500
 
 def process_input_data(input_data, ref_num):
