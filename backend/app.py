@@ -10,7 +10,7 @@ CORS(app, resources={
         ],
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type"],
-        "supports_credentials": True"
+        "supports_credentials": True
     }
 })
 
