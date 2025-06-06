@@ -2,19 +2,14 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={
-    r"/*": {
-        "origins": [
-            "https://flow-chart-render.onrender.com",
-            "http://localhost:3000"  # Keep local development support
-        ],
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"],
-        "supports_credentials": True
-    }
-})
+# Simplified CORS configuration
+CORS(app, 
+     origins=["https://flow-chart-render.onrender.com", "http://localhost:3000"],
+     allow_credentials=True,
+     supports_credentials=True,
+     methods=["GET", "POST", "OPTIONS"])
 
-@app.route('/', methods=['POST', 'OPTIONS'])
+@app.route('/', methods=['GET', 'POST', 'OPTIONS'])''
 def process_data():
     input_data = request.json.get('inputString')
     ref_num = request.json.get('refNum')
