@@ -2,7 +2,16 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["https://flow-chart-render.onrender.com"]}}, supports_credentials=True)
+CORS(app, resources={
+    r"/*": {
+        "origins": [
+            "https://flow-chart-render.onrender.com",
+            "http://localhost:3000"  # Keep local development support
+        ],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 @app.route('/', methods=['POST'])
 def process_data():
@@ -53,9 +62,21 @@ def process_data():
         'ref_dict': dct
     })
 
-def process_input_data(inp, num):
-    inp = inp.split('\n')
-
+def process_input_data(input_data, ref_num):
+    # Add input validation
+    if not input_data:
+        return {"error": "No input data provided"}, {}
+        
+    inp = input_data.split('\n')
+    if not inp:  # Check if inp is empty
+        return {"error": "Empty input data"}, {}
+        
+    try:
+        if len(inp[-1]) == 1:
+            # ... rest of your code ...
+    except IndexError:
+        return {"error": "Invalid input format"}, {}
+    
     x = len(inp) - 1
     while x >= 0:
         pointer = len(inp[x]) - 1
@@ -79,7 +100,7 @@ def process_input_data(inp, num):
     add = 2
     for element in inp:
         if element not in dct:
-            dct[element] = num + add
+            dct[element] = ref_num + add
             add += 2
 
     inp = [inp[i:i+4] for i in range(0, len(inp), 4)]
