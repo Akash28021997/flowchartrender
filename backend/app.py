@@ -9,11 +9,12 @@ CORS(app, resources={
             "http://localhost:3000"  # Keep local development support
         ],
         "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"]
+        "allow_headers": ["Content-Type"],
+        "supports_credentials": True"
     }
 })
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['POST', 'OPTIONS'])
 def process_data():
     input_data = request.json.get('inputString')
     ref_num = request.json.get('refNum')
