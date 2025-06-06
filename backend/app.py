@@ -9,7 +9,7 @@ CORS(app,
      allow_credentials=True,
      methods=["GET", "POST", "OPTIONS"])
 
-@app.route('/', methods=['GET', 'POST', 'OPTIONS'])''
+@app.route('/', methods=['GET', 'POST', 'OPTIONS'])
 def process_data():
     if request.method == 'OPTIONS':
         # Handle preflight request
